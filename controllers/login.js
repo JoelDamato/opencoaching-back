@@ -1,43 +1,41 @@
-const { Client } = require('@notionhq/client');
+// Importar los módulos necesarios
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/Users'); // Importar el modelo de usuario
+require('dotenv').config(); // Importar dotenv para manejar variables de entorno
 
-// Inicializar cliente de Notion con el token desde variables de entorno
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
-const databaseId = process.env.NOTION_DATABASE_ID;
-
-// Función para manejar el inicio de sesión
+// Controlador para loguear un usuario
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    // Consultar la base de datos de Notion para buscar por email (propiedad tipo email)
-    const response = await notion.databases.query({
-      database_id: databaseId,
-      filter: {
-        property: 'Email',
-        email: {
-          equals: email,
-        },
-      },
-    });
+    const { email, password } = req.body; // Cambiado a req.body para manejar correctamente los datos con POST
 
-    const user = response.results[0];
+    // Verificar que los campos requeridos estén presentes
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email y contraseña son requeridos' });
+    }
 
+    // Buscar al usuario por email
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ success: false, message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
 
-    // Comparar la contraseña (propiedad de tipo texto)
-    const storedPassword = user.properties.Contraseña.rich_text[0].text.content;
-
-    if (storedPassword !== password) {
-      return res.status(400).json({ success: false, message: 'Contraseña incorrecta' });
+    // Verificar la contraseña
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
 
-    return res.status(200).json({ success: true, message: 'Inicio de sesión exitoso' });
+    // Generar un token JWT
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    // Devolver el token al usuario
+    res.status(200).json({ message: 'Logeo exitoso', token });
   } catch (error) {
-    console.error('Error del servidor:', error);
-    return res.status(500).json({ success: false, message: 'Error del servidor' });
+    console.error('Error al hacer login:', error);
+    res.status(500).json({ message: 'Error en el servidor' });
   }
 };
 
+// Exportar la función para ser utilizada en las rutas específicas
 module.exports = loginUser;
