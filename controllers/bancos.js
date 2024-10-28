@@ -27,15 +27,20 @@ const getWesternBanks = async (req, res) => {
           contains: 'western',
         },
       },
+      page_size: 17, // Limitamos el número de resultados para pruebas rápidas
     });
 
-    // Extraemos los resultados de la respuesta
-    const results = response.data.results;
+    // Mapeamos los resultados para extraer solo las propiedades necesarias
+    const results = response.data.results.map((item) => ({
+      nombreBanco: item.properties["Bancos N"]?.title?.[0]?.plain_text || "", // Validación para "Nombre del Banco"
+      pais: item.properties["Nacionalidad"]?.select?.name || "", // Validación para "País"
+      estadoPagos: item.properties["Estado Datos"]?.formula?.string || "", // Validación para "Estado Pagos"
+    }));
 
-    // Enviamos los resultados al cliente
+    // Enviamos los resultados procesados al cliente
     res.json(results);
   } catch (error) {
-    console.error('Error fetching data from Notion:', error.message);
+    console.error('Error fetching data from Notion:', error.response?.data || error.message);
     res.status(500).send('Error fetching data from Notion');
   }
 };
