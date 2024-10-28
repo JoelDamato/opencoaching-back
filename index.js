@@ -9,6 +9,7 @@ const loginRoutes = require('./routes/loginrout');
 const createRoutes = require('./routes/createusers');
 const searchRoutes = require('./routes/searchrout');
 const updateRoutes = require('./routes/updaterout');
+const certificadoRoutes =require('./routes/certificadorout');
 
 // Configuración de la app
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/auth', loginRoutes);
 app.use('/api/create', createRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/update', updateRoutes);
+app.use('/api/certificado', certificadoRoutes);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
