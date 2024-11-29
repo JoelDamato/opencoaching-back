@@ -5,6 +5,10 @@ const chapterSchema = new mongoose.Schema({
     type: String, // Título del capítulo
     required: true,
   },
+  imagechap: {
+    type: String, // URL de la imagen del curso
+    required: true,
+  },
   description: {
     type: String, // Descripción del capítulo
     required: true,
