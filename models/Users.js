@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  cursos: { type: [String], enum: ["Focus", "Master Fade 2.0", "Cutting Mastery"] },
+  cursos: { type: [String], enum: ["Focus", "Master Fade", "Cutting Mastery"] },
   rol: {
     type: String,
     enum: ["user", "admin"], // Define los roles permitidos
