@@ -19,9 +19,14 @@ app.use(cors()); // Permitir acceso desde cualquier origen (CORS liberado)
 app.use(express.json());
 
 // Conectar con MongoDB
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  maxPoolSize: 500, // Configurar el tamaño máximo del pool de conexiones
+})
   .then(() => console.log('Conexión exitosa con MongoDB'))
   .catch((error) => console.error('Error al conectar con MongoDB:', error));
+
 
 // Usar las rutas
 app.use('/api/bancos', bancoRoutes);
