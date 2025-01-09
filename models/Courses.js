@@ -13,6 +13,10 @@ const chapterSchema = new mongoose.Schema({
     type: String, // Descripción del capítulo
     required: true,
   },
+    module: {
+    type: String, // Descripción del capítulo
+    required: true,
+  },
   video: {
     type: String, // URL del video del capítulo
     required: true,

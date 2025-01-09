@@ -6,8 +6,12 @@ const commentSchema = new mongoose.Schema({
     ref: 'Course',
     required: true,
   },
+  moduleName: {
+    type: String, // Nombre del módulo al que pertenece el comentario
+    required: true,
+  },
   chapterId: {
-    type: Number, // ID del capítulo dentro del curso
+    type: Number, // ID del capítulo dentro del módulo
     required: true,
   },
   userEmail: {
@@ -24,6 +28,4 @@ const commentSchema = new mongoose.Schema({
   },
 });
 
-
 module.exports = mongoose.model('Comment', commentSchema);
-
