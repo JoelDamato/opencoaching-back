@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/Users'); // Asegúrate de usar la ruta correcta
-
+const mercadopago = require('mercadopago');
 
 const createUser = async (req, res) => {
   try {
@@ -56,7 +56,7 @@ const createUser = async (req, res) => {
     // Si la membresía es mayor a 0 (no gratuita), redirigir a la pasarela de pago
     if (membresia > 0) {
       // Aquí se puede integrar con la API de Mercado Pago para crear un pago
-      const preapprovalPlanId = '2c9380849469a4a10194701c93b20414'; // Tu ID de suscripción
+      const preapprovalPlanId = process.env.MERCADOPAGO_PREAPPROVAL_PLAN_ID;
       const subscriptionUrl = `https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=${preapprovalPlanId}`;
 
       return res.status(201).json({
