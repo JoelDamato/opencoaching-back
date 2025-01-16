@@ -13,6 +13,7 @@ const certificadoRoutes =require('./routes/certificadorout');
 const commentsRoutes =require('./routes/commentsrout');
 const coursesRoutes =require('./routes/coursesrout');
 const ipRoutes =require('./routes/iprout');
+const weebhokmp =require('./controllers/weebhook')
 
 // Configuración de la app
 const app = express();
@@ -38,7 +39,7 @@ app.use('/api/update', updateRoutes);
 app.use('/api/certificado', certificadoRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/courses', coursesRoutes);
-app.use('/api/ip', ipRoutes);
+app.use('/api', ipRoutes);
 
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
