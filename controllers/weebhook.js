@@ -1,7 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const User = require('../models/User'); // Asegúrate de tener este modelo
+const User = require('../models/Users'); // Asegúrate de tener este modelo
 
 router.post('/webhook', async (req, res) => {
   try {
