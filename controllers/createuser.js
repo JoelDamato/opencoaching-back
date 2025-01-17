@@ -45,7 +45,7 @@ const createUser = async (req, res) => {
       email,
       password: hashedPassword,
       cursos: cursos || [],
-      membresia: membresia !== undefined ? membresia : 0,
+      membresia: 0,
       rol: rol || 'user',
       audiencia: audiencia || 'Cliente',
     });
@@ -75,3 +75,5 @@ const createUser = async (req, res) => {
 };
 
 module.exports = createUser;
+
+
