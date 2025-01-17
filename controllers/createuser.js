@@ -1,11 +1,12 @@
 const bcrypt = require('bcrypt');
-const User = require('../models/Users'); // Asegúrate de usar la ruta correcta
+const User = require('../models/Users'); // Ruta al modelo de usuario
 const mercadopago = require('mercadopago');
+
+// Configura el token de acceso de Mercado Pago
+mercadopago.configurations.setAccessToken(process.env.MERCADOPAGO_ACCESS_TOKEN);
 
 const createUser = async (req, res) => {
   try {
-    console.log('Cuerpo de la solicitud recibido:', req.body);
-
     const { 
       nombre, 
       email, 
@@ -51,13 +52,12 @@ const createUser = async (req, res) => {
     });
 
     // Guardar el usuario en la base de datos
-    await user.save();
+    const savedUser = await user.save();
 
-    // Si la membresía es mayor a 0 (no gratuita), redirigir a la pasarela de pago
+    // Si la membresía es mayor a 0 (requiere pago), generar el enlace de suscripción
     if (membresia > 0) {
-      // Aquí se puede integrar con la API de Mercado Pago para crear un pago
       const preapprovalPlanId = process.env.MERCADOPAGO_PREAPPROVAL_PLAN_ID;
-      const subscriptionUrl = `https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=${preapprovalPlanId}`;
+      const subscriptionUrl = `https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=${preapprovalPlanId}&external_reference=${savedUser._id}`;
 
       return res.status(201).json({
         message: 'Usuario creado. Redirigiendo a la suscripción.',
@@ -74,6 +74,45 @@ const createUser = async (req, res) => {
   }
 };
 
-module.exports = createUser;
+// Endpoint para verificar el pago
+const verifyPayment = async (req, res) => {
+  try {
+    const { userId } = req.query; // Se recibe el ID del usuario desde la consulta
 
+    if (!userId) {
+      return res.status(400).json({ message: 'El ID del usuario es requerido.' });
+    }
 
+    // Buscar pagos relacionados al usuario en Mercado Pago
+    const searchResult = await mercadopago.payment.search({
+      qs: {
+        external_reference: userId, // Buscar pagos por el ID del usuario
+      },
+    });
+
+    const payment = searchResult.body.results.find(
+      (p) => p.external_reference === userId && p.status === 'approved'
+    );
+
+    if (payment) {
+      const user = await User.findById(userId);
+      if (user) {
+        user.membresia = 1; // Actualizar membresía a 1
+        await user.save();
+        return res.status(200).json({ message: 'Pago verificado y membresía actualizada.' });
+      } else {
+        return res.status(404).json({ message: 'Usuario no encontrado.' });
+      }
+    } else {
+      return res.status(400).json({ message: 'Pago no aprobado o no encontrado.' });
+    }
+  } catch (error) {
+    console.error('Error al verificar el pago:', error);
+    res.status(500).json({ message: 'Error en el servidor' });
+  }
+};
+
+module.exports = {
+  createUser,
+  verifyPayment,
+};
