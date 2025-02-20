@@ -1,7 +1,6 @@
 const express = require('express');
-const createUser = require('../controllers/createuser');
+const createUser  = require('../controllers/createuser'); // Desestructuración para obtener la función específica
 
-// Crear el router
 const router = express.Router();
 
 // Definir la ruta para el registro

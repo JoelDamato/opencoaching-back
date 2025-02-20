@@ -6,7 +6,7 @@ require('dotenv').config(); // Importar dotenv para manejar variables de entorno
 
 const bancoRoutes = require('./routes/bancorout');
 const loginRoutes = require('./routes/loginrout');
-const createRoutes = require('./routes/createusers');
+const createRoutes = require('./routes/createusersrout');
 const searchRoutes = require('./routes/searchrout');
 const updateRoutes = require('./routes/updaterout');
 const certificadoRoutes =require('./routes/certificadorout');
@@ -14,6 +14,7 @@ const commentsRoutes =require('./routes/commentsrout');
 const coursesRoutes =require('./routes/coursesrout');
 const ipRoutes =require('./routes/iprout');
 const weebhokmp =require('./controllers/weebhook')
+const pagosRouter = require('./routes/pagosrout');
 
 // Configuración de la app
 const app = express();
@@ -42,7 +43,7 @@ app.use('/api/certificado', certificadoRoutes);
 app.use('/api/comments', commentsRoutes);
 app.use('/api/courses', coursesRoutes);
 app.use('/api', weebhokmp);
-
+app.use('/api/pagos', pagosRouter);
 // Iniciar el servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
