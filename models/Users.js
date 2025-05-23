@@ -10,6 +10,10 @@ const UserSchema = new mongoose.Schema({
     enum: [0,1,2,3,4],
     default: 0,
   }, 
+    imagenPerfil: {
+    type: String,
+    default: ".jpg"
+  },
   rol: {
     type: String,
     enum: ["user", "admin"], // Define los roles permitidos
