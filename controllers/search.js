@@ -31,7 +31,10 @@ const getUserDataByEmail = async (req, res) => {
       nombre: user.nombre,  // Ajustado para que coincida con el campo 'nombre' en el modelo
       email: user.email,
       cursos: user.cursos,
-      rol: user.rol,  // Ajustado para que coincida con el campo 'cursos' en el modelo
+      rol: user.rol,
+      audiencia : user.audiencia,
+      imagenPerfil : user.imagenPerfil,
+        // Ajustado para que coincida con el campo 'cursos' en el modelo
     });
   } catch (error) {
     console.error('Error fetching user data:', error);
